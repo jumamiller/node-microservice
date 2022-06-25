@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp
+spec:
+  containers:
+    - image: jumamiller/backend-api2
+      name: webapp
+      imagePullPolicy: Always
+      resources: {}
+      ports:
+        - containerPort: 3080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: node-webapp
+  name: node-webapp
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: node-webapp
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: node-webapp
+    spec:
+      containers:
+        - image: jumamiller/backend-api2
+          name: webapp
+          imagePullPolicy: Always
+          resources: {}
+          ports:
+            - containerPort: 3080
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-webapp
+  labels:
+    run: node-webapp
+spec:
+  ports:
+    - port: 3080
+      protocol: TCP
+  selector:
+    app: node-webapp
+  type: NodePort
